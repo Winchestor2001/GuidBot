@@ -8,3 +8,10 @@ class User(Base, BaseMixin):
 
     def __str__(self):
         return self.username
+
+    def get_readable_role(self) -> str:
+        role_descriptions = {
+            UserRole.MODERATOR: "Moderator",
+            UserRole.ADMIN: "Administrator",
+        }
+        return role_descriptions.get(self.role, "Noma'lum rol")

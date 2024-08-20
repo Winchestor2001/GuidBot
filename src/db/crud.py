@@ -17,6 +17,22 @@ async def create_user_obj(telegram_id: int, username: str):
         return user_obj
 
 
+async def user_detail_obj(telegram_id: int):
+    async with db_helper.session_factory() as session:
+        result = await session.execute(select(User).where(User.telegram_id == telegram_id))
+        user_obj = result.scalars().first()
+        return user_obj
+
+
+async def create_history_place_obj(title: str, description: str, latitude: float, longitude: float, address: str):
+    async with db_helper.session_factory() as session:
+        place_obj = HistoricalPlace(title=title, description=description, lat=latitude, long=longitude, address=address)
+        session.add(place_obj)
+        await session.commit()
+
+        return place_obj
+
+
 async def search_places_obj(lat: float, long: float, radius_m: int = 500):
     async with db_helper.session_factory() as session:
         result = await session.execute(select(HistoricalPlace))
@@ -28,3 +44,10 @@ async def search_places_obj(lat: float, long: float, radius_m: int = 500):
         ]
 
         return nearby_places
+
+
+async def search_places_by_name_obj(title: str):
+    async with db_helper.session_factory() as session:
+        result = await session.execute(select(HistoricalPlace).where(HistoricalPlace.title == title))
+        places = result.scalars().first()
+        return places
