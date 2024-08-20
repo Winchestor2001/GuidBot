@@ -4,13 +4,12 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from sqladmin.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 
 from src.bot import bot_configurations
 from src.bot.app import startup_client_bot, shutdown_client_bot
 from src.db import db_helper
-from src.apps.admin.admin_conf import AdminAuth
+from src.apps.admin.admin_conf import AdminAuth, UserAdmin, HistoricalPlaceAdmin
 from src.logging_conf import setup_logger
 from sqladmin import Admin
 
@@ -48,7 +47,8 @@ def mount_folders(app: FastAPI):
 def register_admin_models(app: FastAPI):
     authentication_backend = AdminAuth(secret_key=settings.token.secret_key)
     admin = Admin(app=app, engine=db_helper.engine, authentication_backend=authentication_backend)
-    # admin.add_view(ProfileAdmin)
+    admin.add_view(UserAdmin)
+    admin.add_view(HistoricalPlaceAdmin)
 
 
 def create_app() -> FastAPI:

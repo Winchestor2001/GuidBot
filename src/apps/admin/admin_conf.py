@@ -2,33 +2,22 @@ import logging
 
 from sqladmin import ModelView
 from sqladmin.authentication import AuthenticationBackend
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from markupsafe import Markup
+from src.db import User, HistoricalPlace
 from src.settings import settings
 
 logger = logging.getLogger("fastapi_app")
 
 
-# class ProductImageAdmin(ModelView, model=ProductImage):
-#     column_list = [ProductImage.uuid, ProductImage.image, ProductImage.product]
-#     column_searchable_list = [ProductImage.uuid]
-#
-#     column_formatters = {
-#         'image': lambda model, field: Markup(
-#             f'<a href="{model.image}" target="_blank">'
-#             f'<img src="{model.image}" style="height:50px;" />'
-#             f'</a>'
-#         )
-#     }
-#     column_formatters_detail = {
-#         'image': lambda model, field: Markup(
-#             f'<a href="{model.image}" target="_blank">'
-#             f'<img src="{model.image}" style="height:150px;" />'
-#             f'</a>'
-#         )
-#     }
+class UserAdmin(ModelView, model=User):
+    column_list = [User.telegram_id, User.username, User.role]
+    column_searchable_list = [User.telegram_id, User.username]
+
+
+class HistoricalPlaceAdmin(ModelView, model=HistoricalPlace):
+    column_list = [HistoricalPlace.title, HistoricalPlace.lat, HistoricalPlace.long]
+    column_searchable_list = [HistoricalPlace.title]
 
 
 class AdminAuth(AuthenticationBackend):
